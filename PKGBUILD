@@ -1,17 +1,17 @@
-# Maintainer: Tom Meyers tom@odex.be
-pkgname=tos-tools
-pkgver=r294.9cfe489
+# Maintainer: Ethan Lane <ethan@vylpes.com>
+pkgname=gos-tools
+pkgver=0.1.0
 pkgrel=1
-pkgdesc="A lot of tools used to make life easier on tos"
+pkgdesc="A lot of tools used to make life easier on gos"
 arch=(any)
-url="https://github.com/ODEX-TOS/tools"
+url="https://github.com/gravityos/tools"
 _reponame="tools"
 license=('GPL')
 
 source=(
-"git+https://github.com/ODEX-TOS/tools.git")
+"git+https://github.com/gravityos/tools.git")
 md5sums=('SKIP')
-depends=('git' 'bash' 'bluez-utils' 'gnupg' 'networkmanager' 'pacman-contrib' 'checkupdates-aur-tos' 'imagemagick' 'light' 'feh' 'yay')
+depends=('git' 'bash' 'bluez-utils' 'gnupg' 'networkmanager' 'pacman-contrib' 'checkupdates-aur-gos' 'imagemagick' 'light' 'feh' 'paru')
 makedepends=('git')
 
 pkgver() {
@@ -36,19 +36,19 @@ package() {
         install -Dm755 09-timezone.NM "$pkgdir"/etc/NetworkManager/dispatcher.d/09-timezone
 
 
-        # tos-helper
-        mkdir -p "$pkgdir"/usr/share/tos-helper
-        for file in tos-helper/* ; do
+        # gos-helper
+        mkdir -p "$pkgdir"/usr/share/gos-helper
+        for file in gos-helper/* ; do
             install -Dm755 "$file" "$pkgdir"/usr/share/"$file"
         done
 
-        # tos tutorial
+        # gos tutorial
         mkdir -p "$pkgdir/usr/share/tos-tutorial/tree"
-        for file in tos-tutorial/tree/* ; do
+        for file in gos-tutorial/tree/* ; do
             install -Dm755 "$file" "$pkgdir"/usr/share/"$file"
         done
-        install -Dm755 "tos-tutorial/main.sh" "$pkgdir/usr/share/tos-tutorial/main.sh"
+        install -Dm755 "gos-tutorial/main.sh" "$pkgdir/usr/share/gos-tutorial/main.sh"
 
         # setup the tutorial application
-        install -Dm644 "tos-tutorial.desktop" "$pkgdir/usr/share/applications/tos-tutorial.desktop"
+        install -Dm644 "gos-tutorial.desktop" "$pkgdir/usr/share/applications/gos-tutorial.desktop"
 }

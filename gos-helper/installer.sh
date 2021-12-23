@@ -2,7 +2,6 @@
 
 # MIT License
 # 
-# Copyright (c) 2019 manilarome
 # Copyright (c) 2020 Tom Meyers
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,28 +22,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# $1 is the exit code
-# $2 is the message
-function log {
-    len="$(( ${#2} - 1 ))"
-    echo -en "$2 "
-    printf '.%.0s' $(seq $(( 70 - $len )))
+# shellcheck disable=SC2059,SC2154
 
-    if [[ ! "$1" -eq "0" ]]; then
-        echo -e " \e[30m\e[41m FAILED  \e[49m\e[39m"
-    else
-        echo -e " \e[30m\e[42m SUCCESS \e[49m\e[39m"
-    fi
+
+function installgosdialog() {
+	printf "${RED}Installing gos${NC}\n"
+	if [[ ! -f dialogarchinstall ]]; then
+		curl https://raw.githubusercontent.com/gravityos/tools/master/gosinstall -o gosinstall
+		chmod +x gosinstall
+	fi
+    if [[ ! "$(command -v os-install)" ]]; then
+            pacman -Syu installer-backend --noconfirm
+	fi
+	if [[ ! -d "$HOME"/cli ]]; then
+		git clone https://github.com/gravityos/installer-curses "$HOME"/cli
+	fi
+	bash "$HOME"/cli/install.sh || exit 1
+	os-install --in gen.yaml --out run.sh || exit 1
+	bash run.sh
 }
+case "$1" in
+"-iso")
+	if [ "$(id -u)" == "0" ]; then
+		printf "${RED} This installer is outdated and no longer works${NC}\n"
+		printf "${RED} Use ${GREEN}tos calamares${RED} to install tos the correct way${NC}\n"
+		exit 1
+		# this function no longer works as expected
+		installtosdialog
+	else
+		printf "${RED} Only root user can install TOS${NC}\n"
+	fi
+	;;
+esac
 
-function run_correct_branch {
-    _branch=$(git branch --show-current)
-    if [[ "$_branch" == "master" ]]; then
-        log "1" "Pushing to master branch is not allowed"
-        exit 1
-    else
-        log "0" "Pushing to the correct branch"
-    fi
-}
-
-run_correct_branch

@@ -75,7 +75,7 @@ function spinner()
 }
 
 function list() {
-    if [[ -f "/var/cache/tos-shell/$USER.list" ]]; then
+    if [[ -f "/var/cache/gos-shell/$USER.list" ]]; then
         num="0"
         while read -r line; do
             local num=$(( num + 1 ))
@@ -88,23 +88,23 @@ function list() {
                 # shellcheck disable=SC2016
                 env "$line" SIZE="$SIZE" ID="$num" sh -c 'echo "ID: $ID -- Command: $RUN, Mountpoint: $MOUNT -> /data, Filesystem size: $SIZE"'
             fi
-        done <"/var/cache/tos-shell/$USER.list"
+        done <"/var/cache/gos-shell/$USER.list"
     fi
 }
 
 function clean() {
-    if [[ -f "/var/cache/tos-shell/$USER.list" ]]; then
+    if [[ -f "/var/cache/gos-shell/$USER.list" ]]; then
         while read -r line; do
             # shellcheck disable=SC2016
             env "$line" sudo sh -c 'rm -rf "$DIR"'
-        done <"/var/cache/tos-shell/$USER.list"
-        sudo rm "/var/cache/tos-shell/$USER.list"
-        sudo touch "/var/cache/tos-shell/$USER.list"
+        done <"/var/cache/gos-shell/$USER.list"
+        sudo rm "/var/cache/gos-shell/$USER.list"
+        sudo touch "/var/cache/gos-shell/$USER.list"
     fi
 }
 
 function remove() {
-    if [[ -f "/var/cache/tos-shell/$USER.list" ]]; then
+    if [[ -f "/var/cache/gos-shell/$USER.list" ]]; then
         local num="0"
         # shellcheck disable=SC2094
         while read -r line; do
@@ -113,10 +113,10 @@ function remove() {
                 # shellcheck disable=SC2016
                 env "$line" sudo sh -c 'rm -rf "$DIR"'
                 # remove line
-                awk -v num="$num" '!(num == NR){print $0}' "/var/cache/tos-shell/$USER.list" > temp && sudo mv temp "/var/cache/tos-shell/$USER.list"
+                awk -v num="$num" '!(num == NR){print $0}' "/var/cache/gos-shell/$USER.list" > temp && sudo mv temp "/var/cache/gos-shell/$USER.list"
                 break
             fi
-        done <"/var/cache/tos-shell/$USER.list"
+        done <"/var/cache/gos-shell/$USER.list"
     fi
 }
 
@@ -137,11 +137,11 @@ function arg_parse(){
         "run"|"ru")
             echo "Running: $3"
             RUNSAVED="$3"
-            if [[ "$3" -gt "$(wc -l /var/cache/tos-shell/"$USER".list | awk '{print $1}')" || "$3" -lt "1" ]]; then
+            if [[ "$3" -gt "$(wc -l /var/cache/gos-shell/"$USER".list | awk '{print $1}')" || "$3" -lt "1" ]]; then
                 echo "Invalid id"
                 exit 1
             fi
-            export "$(env -i "$(awk "NR==$3{print}" "/var/cache/tos-shell/$USER.list")")"
+            export "$(env -i "$(awk "NR==$3{print}" "/var/cache/gos-shell/$USER.list")")"
             # remove all $ options
             while true; do
                 case "$2" in
@@ -256,17 +256,17 @@ function save() {
     echo "Commiting current state"
 
     # ensure the config dir exists
-    if [[ ! -d "/var/cache/tos-shell" ]]; then
+    if [[ ! -d "/var/cache/gos-shell" ]]; then
         sudo mkdir -p "/var/cache/tos-shell"
     fi
 
     # ensure the data for a single user is working
-    if [[ ! -f "/var/cache/tos-shell/$USER.list" ]]; then
-        sudo touch "/var/cache/tos-shell/$USER.list"
+    if [[ ! -f "/var/cache/gos-shell/$USER.list" ]]; then
+        sudo touch "/var/cache/gos-shell/$USER.list"
     fi
 
     # append the current command to the list
-    echo "RUN=$RUN DIR=$DIR GUI=$GUI MOUNT=$MOUNT PACKAGE=$PACKAGE DELETE=$DELETE" | sudo tee -a "/var/cache/tos-shell/$USER.list" &>/dev/null
+    echo "RUN=$RUN DIR=$DIR GUI=$GUI MOUNT=$MOUNT PACKAGE=$PACKAGE DELETE=$DELETE" | sudo tee -a "/var/cache/gos-shell/$USER.list" &>/dev/null
 }
 
 

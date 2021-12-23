@@ -1,6 +1,6 @@
 [Desktop Entry]
 X-Desktop-File-Install-Version=0.11
-Name=TOS Tutorial
+Name=GOS Tutorial
 
 Comment=An interactive tutorial in the terminal
 
@@ -8,4 +8,4 @@ Exec=/bin/st -e /usr/share/tos-tutorial/main.sh
 Icon=preferences-desktop-theme
 Terminal=false
 Type=Application
-Categories=Tutorial;TOS;TDE;
+Categories=Tutorial;GOS;
